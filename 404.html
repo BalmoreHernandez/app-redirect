@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0E1A2E">
+<meta name="robots" content="noindex">
+<title>Balmore Hernandez · Nos mudamos a balmorehernandez.com/fitness</title>
+<link rel="canonical" href="https://balmorehernandez.com/fitness/">
+<meta http-equiv="refresh" content="4;url=https://balmorehernandez.com/fitness/">
+<style>
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:#F6F1E9;color:#0E1A2E;font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:24px;box-sizing:border-box;text-align:center}
+.c{background:#fff;border:1px solid #E4DCCF;border-radius:22px;padding:28px 24px;max-width:420px}
+h1{font-size:21px;margin:0 0 8px}p{margin:0 0 18px;color:#566074}
+a{display:inline-block;background:#A3263A;color:#F6F1E9;text-decoration:none;font-weight:700;padding:14px 22px;border-radius:999px}
+</style>
+<script>
+/* app.balmorehernandez.com ahora vive en balmorehernandez.com/fitness/.
+   1) Lleva los datos guardados (progreso, pesos, reto) a la nueva dirección en el #hash (no se envía a ningún servidor).
+   2) Quita el service worker viejo y sus cachés para que nadie se quede con una copia vieja.
+   3) Redirige conservando la ruta y el ?query. */
+(function () {
+  var TARGET = "https://balmorehernandez.com/fitness/";
+  var KEY = "fitnessPrincipiantes_v1";
+  var rel = location.pathname.replace(/^\/+/, "").replace(/^index\.html?$/i, "").replace(/(^|\/)404\.html$/i, "");
+  var url = TARGET + rel + location.search;
+  var hash = location.hash;
+  try {
+    var data = localStorage.getItem(KEY);
+    if (data && data.length < 1500000) {
+      var bytes = new TextEncoder().encode(data), bin = "";
+      for (var i = 0; i < bytes.length; i += 8192) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 8192));
+      hash = "#bhimport=" + btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    }
+  } catch (e) {}
+  url += hash;
+  var gone = false;
+  function go() { if (!gone) { gone = true; location.replace(url); } }
+  // Primero se da de baja el service worker viejo y luego se borran las cachés (el viejo aún podía guardar esta página).
+  function unreg() { try { return "serviceWorker" in navigator ? navigator.serviceWorker.getRegistrations().then(function (rs) { return Promise.all(rs.map(function (r) { return r.unregister(); })); }) : Promise.resolve(); } catch (e) { return Promise.resolve(); } }
+  function clear() { try { return window.caches ? caches.keys().then(function (ks) { return Promise.all(ks.map(function (k) { return caches.delete(k); })); }) : Promise.resolve(); } catch (e) { return Promise.resolve(); } }
+  function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  setTimeout(go, 1500);
+  unreg().then(function () { return wait(250); }).then(clear).then(go, go);
+})();
+</script>
+</head>
+<body>
+<div class="c">
+  <h1>Nos mudamos · We moved</h1>
+  <p>La app de fitness ahora está en <b>balmorehernandez.com/fitness</b>. Tu progreso viene contigo.<br>The fitness app now lives at <b>balmorehernandez.com/fitness</b>.</p>
+  <a href="https://balmorehernandez.com/fitness/">Abrir la app · Open the app</a>
+</div>
+</body>
+</html>
